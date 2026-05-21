@@ -14,6 +14,7 @@ interface LiffContextType {
   isLoading: boolean;
   isInClient: boolean;
   profile: LiffProfile | null;
+  accessToken: string | null;
   error: string | null;
   login: () => void;
   logout: () => void;
@@ -25,6 +26,7 @@ const LiffContext = createContext<LiffContextType>({
   isLoading: true,
   isInClient: false,
   profile: null,
+  accessToken: null,
   error: null,
   login: () => {},
   logout: () => {},
@@ -37,6 +39,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [isInClient, setIsInClient] = useState(false);
   const [profile, setProfile] = useState<LiffProfile | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,6 +56,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
             displayName: 'Dev User',
             pictureUrl: undefined,
           });
+          setAccessToken(null); // No real token in dev mode
           setIsLoading(false);
           return;
         }
@@ -63,6 +67,11 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (liff.isLoggedIn()) {
           setIsLoggedIn(true);
+
+          // Get the LIFF access token
+          const token = liff.getAccessToken();
+          setAccessToken(token);
+
           const liffProfile = await liff.getProfile();
           setProfile({
             userId: liffProfile.userId,
@@ -80,6 +89,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           userId: 'dev_user_001',
           displayName: 'Dev User',
         });
+        setAccessToken(null);
       } finally {
         setIsLoading(false);
       }
@@ -97,6 +107,8 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     liff.logout();
     setIsLoggedIn(false);
     setProfile(null);
+    setAccessToken(null);
+    localStorage.removeItem('auth_token');
     window.location.reload();
   }, []);
 
@@ -108,6 +120,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         isInClient,
         profile,
+        accessToken,
         error,
         login,
         logout,

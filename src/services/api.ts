@@ -37,6 +37,7 @@ api.interceptors.response.use(
 // API endpoints
 export const authApi = {
   lineLogin: (code: string) => api.post('/auth/line/login', { code }),
+  lineTokenLogin: (accessToken: string) => api.post('/auth/line/token-login', { accessToken }),
   adminLogin: (email: string, password: string) =>
     api.post('/auth/admin/login', { email, password }),
 };
