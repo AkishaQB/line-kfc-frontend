@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { api, authApi } from '../services/api';
-import { useLiff } from './LiffContext';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { api, authApi } from "../services/api";
+import { useLiff } from "./LiffContext";
 
 interface Customer {
   id: string;
@@ -30,9 +36,11 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [token, setTokenState] = useState<string | null>(
-    localStorage.getItem('auth_token'),
+    localStorage.getItem("auth_token"),
   );
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(false);
@@ -40,23 +48,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const hasExchanged = useRef(false);
 
   const setToken = (newToken: string) => {
-    localStorage.setItem('auth_token', newToken);
+    localStorage.setItem("auth_token", newToken);
     setTokenState(newToken);
-    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem("auth_token");
     setTokenState(null);
     setCustomer(null);
     hasExchanged.current = false;
-    delete api.defaults.headers.common['Authorization'];
+    delete api.defaults.headers.common["Authorization"];
   };
 
   // Set auth header from stored token on mount
   useEffect(() => {
     if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
   }, [token]);
 
@@ -71,16 +79,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasExchanged.current = true;
         return;
       }
+      console.log("customer", accessToken, profile, token, isLoggedIn);
 
       // Dev mode — no LIFF access token available, use mock
       if (!accessToken) {
-        console.log('No LIFF access token — using dev mode mock customer');
+        console.log("No LIFF access token — using dev mode mock customer");
         setCustomer({
-          id: 'dev-customer-id',
+          id: "dev-customer-id",
           displayName: profile.displayName,
           pictureUrl: profile.pictureUrl,
           points: 1500,
-          tier: 'SILVER',
+          tier: "SILVER",
         });
         hasExchanged.current = true;
         return;
@@ -89,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Real LIFF flow — exchange the access token for a JWT via backend
       setIsAuthLoading(true);
       try {
-        console.log('Exchanging LIFF access token for backend JWT...');
+        console.log("Exchanging LIFF access token for backend JWT...");
         const response: any = await authApi.lineTokenLogin(accessToken);
 
         // response = { accessToken: 'jwt...', customer: { id, displayName, ... } }
@@ -100,16 +109,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setCustomer(customerData);
         hasExchanged.current = true;
 
-        console.log(`Authenticated as: ${customerData.displayName} (${customerData.tier})`);
+        console.log(
+          `Authenticated as: ${customerData.displayName} (${customerData.tier})`,
+        );
       } catch (err: any) {
-        console.error('Failed to exchange LIFF token:', err?.response?.data || err.message);
+        console.error(
+          "Failed to exchange LIFF token:",
+          err?.response?.data || err.message,
+        );
         // Fallback: still show the app with LIFF profile data
         setCustomer({
-          id: 'unknown',
+          id: "unknown",
           displayName: profile.displayName,
           pictureUrl: profile.pictureUrl,
           points: 0,
-          tier: 'BRONZE',
+          tier: "BRONZE",
         });
         hasExchanged.current = true;
       } finally {
