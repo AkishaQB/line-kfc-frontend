@@ -23,7 +23,7 @@ const AdminLogin = () => {
         localStorage.setItem("admin_token", res.accessToken);
         localStorage.setItem("admin_name", res.admin.name || "");
         localStorage.setItem("admin_role", res.admin.role || "");
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else {
         setError("Invalid response from server");
       }
