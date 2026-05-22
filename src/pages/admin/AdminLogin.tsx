@@ -21,6 +21,7 @@ const AdminLogin = () => {
       // Backend returns: { accessToken, admin: { name, role } }
       if (res && res.accessToken && res.admin) {
         localStorage.setItem("admin_token", res.accessToken);
+        localStorage.setItem("auth_token", res.accessToken);
         localStorage.setItem("admin_name", res.admin.name || "");
         localStorage.setItem("admin_role", res.admin.role || "");
         navigate("/admin/dashboard");
