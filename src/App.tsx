@@ -37,7 +37,7 @@ function App() {
           )
         }
       >
-        <Route index element={<AdminDashboard />} />
+        <Route index path="dashboard" element={<AdminDashboard />} />
         <Route path="coupons" element={<AdminCoupons />} />
         <Route path="campaigns" element={<AdminCampaigns />} />
         <Route path="customers" element={<AdminCustomers />} />
