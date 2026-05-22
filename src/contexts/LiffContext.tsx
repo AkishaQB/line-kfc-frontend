@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import liff from '@line/liff';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import liff from "@line/liff";
+import { useNavigate } from "react-router";
 
 interface LiffProfile {
   userId: string;
@@ -34,13 +41,16 @@ const LiffContext = createContext<LiffContextType>({
 
 export const useLiff = () => useContext(LiffContext);
 
-export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isInClient, setIsInClient] = useState(false);
   const [profile, setProfile] = useState<LiffProfile | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initLiff = async () => {
@@ -49,11 +59,11 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (!liffId) {
           // Development mode — bypass LIFF
-          console.warn('LIFF ID not configured. Running in development mode.');
+          console.warn("LIFF ID not configured. Running in development mode.");
           setIsLoggedIn(true);
           setProfile({
-            userId: 'dev_user_001',
-            displayName: 'Dev User',
+            userId: "dev_user_001",
+            displayName: "Dev User",
             pictureUrl: undefined,
           });
           setAccessToken(null); // No real token in dev mode
@@ -81,13 +91,13 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
         }
       } catch (err: any) {
-        console.error('LIFF init error:', err);
-        setError(err.message || 'Failed to initialize LIFF');
+        console.error("LIFF init error:", err);
+        setError(err.message || "Failed to initialize LIFF");
         // Fallback to dev mode
         setIsLoggedIn(true);
         setProfile({
-          userId: 'dev_user_001',
-          displayName: 'Dev User',
+          userId: "dev_user_001",
+          displayName: "Dev User",
         });
         setAccessToken(null);
       } finally {
@@ -100,7 +110,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = useCallback(() => {
     if (liff.isInClient()) return;
-    liff.login({ redirectUri: window.location.href });
+    liff.login({ redirectUri: "https://line-kfc-frontend.vercel.app/" });
   }, []);
 
   const logout = useCallback(() => {
@@ -108,8 +118,8 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoggedIn(false);
     setProfile(null);
     setAccessToken(null);
-    localStorage.removeItem('auth_token');
-    window.location.reload();
+    localStorage.removeItem("auth_token");
+    navigate("/login");
   }, []);
 
   return (
