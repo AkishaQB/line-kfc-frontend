@@ -1,24 +1,24 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useLiff } from './contexts/LiffContext';
-import BottomNav from './components/BottomNav';
-import Home from './pages/Home';
-import MyCoupons from './pages/MyCoupons';
-import CouponDetail from './pages/CouponDetail';
-import Rewards from './pages/Rewards';
-import Profile from './pages/Profile';
-import Login from './pages/Login';
-import LoadingSpinner from './components/LoadingSpinner';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useLiff } from "./contexts/LiffContext";
+import BottomNav from "./components/BottomNav";
+import Home from "./pages/Home";
+import MyCoupons from "./pages/MyCoupons";
+import CouponDetail from "./pages/CouponDetail";
+import Rewards from "./pages/Rewards";
+import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 // Admin pages
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminLayout from './pages/admin/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCoupons from './pages/admin/AdminCoupons';
-import AdminCampaigns from './pages/admin/AdminCampaigns';
-import AdminCustomers from './pages/admin/AdminCustomers';
-import AdminRedemptions from './pages/admin/AdminRedemptions';
-import AdminStores from './pages/admin/AdminStores';
-import AdminNotifications from './pages/admin/AdminNotifications';
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminCoupons from "./pages/admin/AdminCoupons";
+import AdminCampaigns from "./pages/admin/AdminCampaigns";
+import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminRedemptions from "./pages/admin/AdminRedemptions";
+import AdminStores from "./pages/admin/AdminStores";
+import AdminNotifications from "./pages/admin/AdminNotifications";
 
 function App() {
   const { isLoggedIn, isLoading } = useLiff();
@@ -30,9 +30,11 @@ function App() {
       <Route
         path="/admin/*"
         element={
-          localStorage.getItem('admin_token')
-            ? <AdminLayout />
-            : <Navigate to="/admin/login" replace />
+          localStorage.getItem("admin_token") ? (
+            <AdminLayout />
+          ) : (
+            <Navigate to="/admin/login" replace />
+          )
         }
       >
         <Route index element={<AdminDashboard />} />
