@@ -28,15 +28,7 @@ const AdminLogin = () => {
         setError("Invalid response from server");
       }
     } catch (err) {
-      const errorMsg =
-        err &&
-        typeof err === "object" &&
-        "response" in err &&
-        err.response?.data?.message
-          ? err.response.data.message
-          : err && typeof err === "object" && "message" in err
-            ? err.message
-            : "Invalid email or password";
+      const errorMsg = "Invalid email or password";
       setError(errorMsg);
     } finally {
       setLoading(false);
