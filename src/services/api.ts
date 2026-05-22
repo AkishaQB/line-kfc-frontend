@@ -47,6 +47,13 @@ export const customerApi = {
   getMe: () => api.get("/customers/me"),
   updateMe: (data: any) => api.put("/customers/me", data),
   getPointsHistory: (page = 1) => api.get(`/customers/me/points?page=${page}`),
+  getAll: (page = 1, limit = 20, search?: string, tier?: string) => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search) params.set("search", search);
+    if (tier) params.set("tier", tier);
+    return api.get(`/customers?${params.toString()}`);
+  },
+  getById: (id: string) => api.get(`/customers/${id}`),
 };
 
 export const couponApi = {
